@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es5",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "noEmitHelpers": false,
+    "noImplicitAny": true,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"],
+      "~/*": ["./lib/*"],
+      "@@/*": ["./*"],
+      "~~/*": ["./*"]
+    },
+    "typeRoots": ["node_modules/@types", "src"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "types/**/*.d.ts"
+  ],
+  "exclude": [
+    ".keep",
+    ".templates",
+    "node_modules"
+  ],
+  "compileOnSave": false
+}
