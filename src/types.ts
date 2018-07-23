@@ -6,6 +6,11 @@ export interface IRequestRunnerPayload {
   method?: string
 }
 
+export interface IResolveRequestInfoResult {
+  basePath: string
+  requestInfo: IRequest | TRequestRunner
+}
+
 export type TRequestRunner = (url: string, payload?: IRequestRunnerPayload) => Promise<any>
 
 export interface IPathParams {[name: string]: string}

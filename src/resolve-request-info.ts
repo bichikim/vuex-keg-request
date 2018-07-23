@@ -3,13 +3,9 @@ import join from 'url-join'
 import {
   IRequest,
   IRequestConfig,
+  IResolveRequestInfoResult,
   TRequestRunner,
 } from './types'
-
-interface IResolveRequestInfoResult {
-  basePath: string
-  requestInfo: IRequest | TRequestRunner
-}
 
 const enterModule = (way: string[], requestConfig: IRequestConfig): IRequestConfig => {
   if(way.length > 0){

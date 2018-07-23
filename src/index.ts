@@ -4,10 +4,9 @@ import resolveRequestInfo from './resolve-request-info'
 import {
   IKegRequestOptions,
   IRequest,
-  IRequestOptionNext,
   IRequestOptions,
-  TRequestRunner,
 } from './types'
+export * from './types'
 const kegRequest = (options: IKegRequestOptions) =>  {
   if(!options.request){
     throw new Error('[kegRequest] request must have request item of options')

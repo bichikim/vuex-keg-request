@@ -5,7 +5,6 @@ import {
 
 const resolveParams = (
   firstArgs: IRequestOptions | string | IRequest, ...args: any[]): IRequestOptions => {
-  const secondArgs = args[0]
   if(
     typeof firstArgs === 'string'
     || typeof firstArgs === 'function'

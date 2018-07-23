@@ -1,2 +1,3 @@
-import MyTypescript from './src'
-export {MyTypescript}
+import kefRequest from './src'
+export * from './src'
+export default kefRequest
