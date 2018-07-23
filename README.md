@@ -1,2 +1,2 @@
-# Vuex-keg-resolve
-> a keg to resolve Promise
+# Vuex-keg-request
+> a keg to request
