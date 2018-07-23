@@ -7,10 +7,7 @@ import {
   IRequestOptions,
 } from './types'
 export * from './types'
-const kegRequest = (options: IKegRequestOptions) =>  {
-  if(!options.request){
-    throw new Error('[kegRequest] request must have request item of options')
-  }
+const kegRequest = (options: IKegRequestOptions = {}) =>  {
   const {
     requestConfig = {requests: {}},
     def: {
@@ -39,7 +36,13 @@ const kegRequest = (options: IKegRequestOptions) =>  {
         if(_request){
           _request(url, {params, headers, method})
         }
-        return request(url, {params, headers, method})
+        if(request){
+          return request(url, {params, headers, method})
+        }
+        return fetch(url, {body: JSON.stringify(params), headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+        }, method})
       }
     }
   }

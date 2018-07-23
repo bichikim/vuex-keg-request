@@ -23,7 +23,7 @@ export interface IKegRequestOptions {
   def?: {
     method?: string
   },
-  request: TRequestRunner
+  request?: TRequestRunner
 }
 
 export interface IRequestOptions extends IRequestOptionNext{
