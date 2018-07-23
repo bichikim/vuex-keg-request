@@ -1,21 +1,21 @@
+import {IRequest} from '@/types'
 import {
   IRequestOptions,
 } from './types'
-import {IRequest} from '@/types'
 
 const resolveParams = (
-  firstArgs: IRequestOptions | string | IRequest,
-  ...args: any[],
-): IRequestOptions => {
-  if(typeof firstArgs === 'string' || typeof firstArgs === 'function'){
-    const requestOptions: IRequestOptions = {requestInfo: firstArgs}
+  firstArgs: IRequestOptions | string | IRequest, ...args: any[]): IRequestOptions => {
+  const secondArgs = args[0]
+  if(
+    typeof firstArgs === 'string'
+    || typeof firstArgs === 'function'
+    || typeof firstArgs === 'object' && !(firstArgs as IRequestOptions).requestInfo
+  ){
     const [params, pathParams, headers] = args
-    Object.assign(requestOptions, {
-      params,
-      pathParams,
-      headers,
-    })
-    return requestOptions
+    return Object.assign(
+      {requestInfo: firstArgs as IRequest},
+      {params, pathParams, headers}
+    )
   }
 
   if(typeof firstArgs === 'object'){

@@ -1,19 +1,30 @@
-export type TFcResolveDecorator = ((name: string) => string)
-export type TRequestRunner = (path: TPath, params: IParams, headers: IHeaders) => Promise<any>
+import {IKegContext} from 'vuex-keg'
 
+export interface IRequestRunnerPayload {
+  path: string
+  params?: IParams
+  headers?: IHeaders
+  pathParams?: IPathParams
+  method?: string
+}
 
-export type TPath = string | IFcPath
+export type TRequestRunner = (payload: IRequestRunnerPayload) => Promise<any>
+
 export interface IPathParams {[name: string]: string}
 export interface IParams {[name: string]: any}
 export interface IHeaders {[name: string]: any}
 
-
 export interface IKegRequestOptions {
   requestConfig?: IRequestConfig
+  auth?: (context: IKegContext) => {params: IParams, headers: IHeaders}
+  request: TRequestRunner
 }
 
-export interface IRequestOptions {
+export interface IRequestOptions extends IRequestOptionNext{
   requestInfo: string | IRequest
+}
+
+export interface IRequestOptionNext {
   pathParams?: IPathParams
   params?: IParams
   headers?: IHeaders
@@ -29,8 +40,7 @@ export interface IRequestConfig {
   modules?: IModules
 }
 
-
-export type IFcPath = (pathParams: {[name: string]: string}) => string
+export type IFcPath = (pathParams: IPathParams) => string
 
 export interface IRequest {
   path: string | IFcPath

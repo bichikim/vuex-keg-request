@@ -1,4 +1,2 @@
-declare module 'join-path' {
-  function JoinPath(...args: string[]): string
-  export = JoinPath
-}
+declare module 'join-path'
+declare module 'url-join'

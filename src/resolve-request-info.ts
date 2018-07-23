@@ -1,10 +1,9 @@
-import joinPath from 'join-path'
+import join from 'url-join'
 
 import {
   IRequest,
   IRequestConfig,
 } from './types'
-
 
 const enterModule = (way: string[], requestConfig: IRequestConfig): IRequestConfig => {
   if(way.length > 0){
@@ -15,10 +14,10 @@ const enterModule = (way: string[], requestConfig: IRequestConfig): IRequestConf
         `is ${way.join('/')}`)
     }
     const _requestConfig = requestConfig.modules[nextModuleName]
-
+    //
     return enterModule(way, {
       ..._requestConfig,
-      basePath: joinPath(requestConfig.basePath, _requestConfig.basePath)
+      basePath: join(requestConfig.basePath, _requestConfig.basePath),
     })
   }
   return requestConfig

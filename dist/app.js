@@ -1,14 +1,26 @@
-!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define("my-typescript",[],t):"object"==typeof exports?exports["my-typescript"]=t():e["my-typescript"]=t()}(this,function(){return function(e){var t={};function n(r){if(t[r])return t[r].exports;var o=t[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,n),o.l=!0,o.exports}return n.m=e,n.c=t,n.d=function(e,t,r){n.o(e,t)||Object.defineProperty(e,t,{configurable:!1,enumerable:!0,get:r})},n.r=function(e){Object.defineProperty(e,"__esModule",{value:!0})},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=1)}([
-/*!**********************!*\
-  !*** ./src/index.ts ***!
-  \**********************/
-/*! exports provided: default */
-/*! all exports used */
-/*! ModuleConcatenation bailout: Module is referenced from these modules with unsupported syntax: multi ./src/index.ts (referenced with single entry) */function(e,t,n){"use strict";n.r(t);var r=function(){return function(){return"howdy"}}();t.default=r},
+!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define("vuex-keg-resolve",[],t):"object"==typeof exports?exports["vuex-keg-resolve"]=t():e["vuex-keg-resolve"]=t()}(this,function(){return function(e){var t={};function r(n){if(t[n])return t[n].exports;var o=t[n]={i:n,l:!1,exports:{}};return e[n].call(o.exports,o,o.exports,r),o.l=!0,o.exports}return r.m=e,r.c=t,r.d=function(e,t,n){r.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:n})},r.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},r.t=function(e,t){if(1&t&&(e=r(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var n=Object.create(null);if(r.r(n),Object.defineProperty(n,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var o in e)r.d(n,o,function(t){return e[t]}.bind(null,o));return n},r.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(t,"a",t),t},r.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},r.p="",r(r.s=1)}([
+/*!************************************************!*\
+  !*** ./node_modules/upath/build/code/upath.js ***!
+  \************************************************/
+/*! no static exports found */
+/*! exports used: join */
+/*! ModuleConcatenation bailout: Module is not an ECMAScript module */function(e,t,r){var n,o,u,i,a,f,c,l,s,p,d,h=[].slice,v=[].indexOf||function(e){for(var t=0,r=this.length;t<r;t++)if(t in this&&this[t]===e)return t;return-1},m={}.hasOwnProperty;for(l in c=r(/*! path */2),u=function(e){return e instanceof Function},i=function(e){return"string"==typeof e||!!e&&"object"==typeof e&&"[object String]"===Object.prototype.toString.call(e)},(d=t).VERSION="1.1.0",p=function(e){var t;for(e=e.replace(/\\/g,"/"),t=/\/\//;e.match(t);)e=e.replace(t,"/");return e},c)u(s=c[l])?d[l]=function(e){return function(){var t,r;return t=(t=1<=arguments.length?h.call(arguments,0):[]).map(function(e){return i(e)?p(e):e}),r=c[e].apply(c,t),i(r)?p(r):r}}(l):d[l]=s;for(f in d.sep="/",o={toUnix:p,normalizeSafe:function(e){return(e=p(e)).startsWith("./")?e.startsWith("./..")||"./"===e?d.normalize(e):"./"+d.normalize(e):d.normalize(e)},normalizeTrim:function(e){return(e=d.normalizeSafe(e)).endsWith("/")?e.slice(0,+(e.length-2)+1||9e9):e},joinSafe:function(){var e,t;return e=1<=arguments.length?h.call(arguments,0):[],t=d.join.apply(null,e),e[0].startsWith("./")&&!t.startsWith("./")&&(t="./"+t),t},addExt:function(e,t){return t?("."!==t[0]&&(t="."+t),e+(e.endsWith(t)?"":t)):e},trimExt:function(e,t,r){var n;return null==r&&(r=7),n=d.extname(e),a(n,t,r)?e.slice(0,+(e.length-n.length-1)+1||9e9):e},removeExt:function(e,t){return t?(t="."===t[0]?t:"."+t,d.extname(e)===t?d.trimExt(e):e):e},changeExt:function(e,t,r,n){return null==n&&(n=7),d.trimExt(e,r,n)+(t?"."===t[0]?t:"."+t:"")},defaultExt:function(e,t,r,n){var o;return null==n&&(n=7),o=d.extname(e),a(o,r,n)?e:d.addExt(e,t)}},a=function(e,t,r){return null==t&&(t=[]),e&&e.length<=r&&v.call(t.map(function(e){return(e&&"."!==e[0]?".":"")+e}),e)<0},o)if(m.call(o,f)){if(n=o[f],void 0!==d[f])throw new Error("path."+f+" already exists.");d[f]=n}},
 /*!****************************!*\
   !*** multi ./src/index.ts ***!
   \****************************/
 /*! no static exports found */
 /*! all exports used */
-/*! ModuleConcatenation bailout: Module is not an ECMAScript module */function(e,t,n){e.exports=n(/*! ./src/index.ts */0)}])});
+/*! ModuleConcatenation bailout: Module is not an ECMAScript module */function(e,t,r){e.exports=r(/*! ./src/index.ts */3)},
+/*!***********************!*\
+  !*** external "path" ***!
+  \***********************/
+/*! no static exports found */
+/*! all exports used */
+/*! ModuleConcatenation bailout: Module is not an ECMAScript module */function(e,t){e.exports=require("path")},
+/*!**********************************!*\
+  !*** ./src/index.ts + 2 modules ***!
+  \**********************************/
+/*! exports provided: default */
+/*! all exports used */
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/upath/build/code/upath.js (<- Module is not an ECMAScript module) */function(e,t,r){"use strict";r.r(t);var n=function(e){for(var t=[],r=1;r<arguments.length;r++)t[r-1]=arguments[r];if("string"==typeof e||"function"==typeof e){var n={requestInfo:e},o=t[0],u=t[1],i=t[2];return Object.assign(n,{params:o,pathParams:u,headers:i}),n}if("object"==typeof e)return e;throw Error("[vuex-keg-request] unknown firstArgs : "+e)},o=r(0),u=Object.assign||function(e){for(var t,r=1,n=arguments.length;r<n;r++)for(var o in t=arguments[r])Object.prototype.hasOwnProperty.call(t,o)&&(e[o]=t[o]);return e},i=function(e,t){if(e.length>0){var r=e.shift();if(!t.modules)throw new Error("[vuex-keg-request enterModule] no modules any more a way of moduleis "+e.join("/"));var n=t.modules[r];return i(e,u({},n,{basePath:Object(o.join)(t.basePath,n.basePath)}))}return t},a=function(e,t){return t.requests[e]},f=function(e,t){return"string"==typeof e?function(e,t){var r=e.split("@"),n=r[0],o=r[1];if(!o)return a(n,t);var u=i(o.split("/"),t);return a(n,u)}(e,t):"object"==typeof e?e:void 0};t.default=function(e){if(!e.request)throw new Error("[kegRequest] request must have request item of options");var t=e.requestConfig,r=void 0===t?{requests:{}}:t;e.request;return function(){return function(){return function(e){for(var t=[],o=1;o<arguments.length;o++)t[o-1]=arguments[o];var u=n.apply(void 0,[e].concat(t)),i=u.requestInfo;u.headers,u.params,u.pathParams,f(i,r)}}}}}])});
 //# sourceMappingURL=app.js.map
