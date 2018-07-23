@@ -1,13 +1,22 @@
+import join from 'url-join'
 import resolveParams from './resolve-params'
 import resolveRequestInfo from './resolve-request-info'
-import {IKegRequestOptions, IRequest, IRequestOptionNext, IRequestOptions} from './types'
-
+import {
+  IKegRequestOptions,
+  IRequest,
+  IRequestOptionNext,
+  IRequestOptions,
+  TRequestRunner,
+} from './types'
 const kegRequest = (options: IKegRequestOptions) =>  {
   if(!options.request){
     throw new Error('[kegRequest] request must have request item of options')
   }
   const {
     requestConfig = {requests: {}},
+    def: {
+      method: defaultMethod = 'GET',
+    } = {},
     request,
   } = options
   return () => {
@@ -22,15 +31,16 @@ const kegRequest = (options: IKegRequestOptions) =>  {
           params,
           pathParams,
         } = resolveParams(firstArgs, ...args)
-        const requestInfo: IRequest = resolveRequestInfo(_requestInfo, requestConfig)
-        const {path, method} = requestInfo
-        return request({
-          path: typeof path === 'function' ? path(pathParams) : path,
-          params,
-          pathParams,
-          headers,
-          method,
-        })
+        const {basePath, requestInfo} = resolveRequestInfo(_requestInfo, requestConfig)
+        if(typeof requestInfo === 'function'){
+          return requestInfo(basePath, {params, headers})
+        }
+        const {path = '', method = defaultMethod, request: _request} = requestInfo
+        const url = join(basePath, typeof path === 'function' ? path(pathParams) : path)
+        if(_request){
+          _request(url, {params, headers, method})
+        }
+        return request(url, {params, headers, method})
       }
     }
   }

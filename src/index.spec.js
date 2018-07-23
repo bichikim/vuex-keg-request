@@ -15,15 +15,31 @@ describe('vuex-keg-resolve', () => {
       ...keg({
         testPathString({request}) {
           return request({
-            path: 'https://test.com/pathParams',
+            path: 'pathParams',
             method: 'POST',
           }, {item: 'params'}, null,{item: 'headers'})
         },
         testPathFunction({request}) {
           return request({
-            path: ({item}) => (`https://test.com/${item}`),
+            path: ({item}) => (`function/${item}`),
             method: 'POST',
           }, {item: 'params'}, {item: 'pathParams'}, {item: 'headers'})
+        },
+        testDefault({request}) {
+          return request({
+          })
+        },
+        testNameRequest({request}) {
+          return request('test', {item: 'params'}, {item: 'pathParams'}, {item: 'headers'})
+        },
+        testFunctionRequest({request}) {
+          return request('testFunction', {item: 'params'}, null, {item: 'headers'})
+        },
+        testFunctionInObjectRequest({request}) {
+          return request('testFunctionInObject', {item: 'params'}, null, {item: 'headers'})
+        },
+        testModule({request}) {
+          return request('test@auth', {item: 'params'}, {item: 'pathParams'}, {item: 'headers'})
         },
       }),
     },
@@ -31,18 +47,35 @@ describe('vuex-keg-resolve', () => {
       vuexKeg({
         plugins: {
           request: vuexRequest({
-            request({path, params, headers, pathParams, method}) {
-              return Promise.resolve({path, params, headers, pathParams, method})
+            request(path, {params, headers, method}) {
+              return Promise.resolve({path, params, headers, method})
             },
             requestConfig: {
               basePath: 'https://test.com',
               modules: {
-
+                auth: {
+                  requests: {
+                    test: {
+                      path: 'moduleParams',
+                      method: 'POST',
+                    },
+                  },
+                },
               },
               requests: {
                 test: {
-                  path: 'test',
+                  path: 'pathParams',
                   method: 'POST',
+                },
+                testFunction: (path, {params, headers}) => {
+                  return Promise.resolve({path, params, headers})
+                },
+                testFunctionInObject: {
+                  path: 'pathParams',
+                  method: 'PUT',
+                  request: (path, {params, headers, method}) => {
+                    return Promise.resolve({path, params, headers, method})
+                  },
                 },
               },
             },
@@ -59,12 +92,45 @@ describe('vuex-keg-resolve', () => {
     expect(result.params).to.deep.equal({item: 'params'})
     expect(result.headers).to.deep.equal({item: 'headers'})
   })
-  it('should request', async () => {
+  it('should request with function path', async () => {
     const result = await store.dispatch('testPathFunction')
+    expect(result.path).to.equal('https://test.com/function/pathParams')
+    expect(result.method).to.equal('POST')
+    expect(result.params).to.deep.equal({item: 'params'})
+    expect(result.headers).to.deep.equal({item: 'headers'})
+  })
+  it('should request with default values', async () => {
+    const result = await store.dispatch('testDefault')
+    expect(result.path).to.equal('https://test.com')
+    expect(result.method).to.equal('GET')
+    expect(result.params).to.be.a('undefined')
+    expect(result.headers).to.be.a('undefined')
+  })
+  it('should request with name request', async () => {
+    const result = await store.dispatch('testNameRequest')
     expect(result.path).to.equal('https://test.com/pathParams')
     expect(result.method).to.equal('POST')
     expect(result.params).to.deep.equal({item: 'params'})
     expect(result.headers).to.deep.equal({item: 'headers'})
-    expect(result.pathParams).to.deep.equal({item: 'pathParams'})
+  })
+  it('should request with name & function request', async () => {
+    const result = await store.dispatch('testFunctionRequest')
+    expect(result.path).to.equal('https://test.com')
+    expect(result.params).to.deep.equal({item: 'params'})
+    expect(result.headers).to.deep.equal({item: 'headers'})
+  })
+  it('should request with name, object & function request', async () => {
+    const result = await store.dispatch('testFunctionInObjectRequest')
+    expect(result.path).to.equal('https://test.com/pathParams')
+    expect(result.method).to.equal('PUT')
+    expect(result.params).to.deep.equal({item: 'params'})
+    expect(result.headers).to.deep.equal({item: 'headers'})
+  })
+  it('should request with name & module', async () => {
+    const result = await store.dispatch('testModule')
+    expect(result.path).to.equal('https://test.com/moduleParams')
+    expect(result.method).to.equal('POST')
+    expect(result.params).to.deep.equal({item: 'params'})
+    expect(result.headers).to.deep.equal({item: 'headers'})
   })
 })

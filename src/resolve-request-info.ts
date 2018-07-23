@@ -3,7 +3,13 @@ import join from 'url-join'
 import {
   IRequest,
   IRequestConfig,
+  TRequestRunner,
 } from './types'
+
+interface IResolveRequestInfoResult {
+  basePath: string
+  requestInfo: IRequest | TRequestRunner
+}
 
 const enterModule = (way: string[], requestConfig: IRequestConfig): IRequestConfig => {
   if(way.length > 0){
@@ -17,7 +23,7 @@ const enterModule = (way: string[], requestConfig: IRequestConfig): IRequestConf
     //
     return enterModule(way, {
       ..._requestConfig,
-      basePath: join(requestConfig.basePath, _requestConfig.basePath),
+      basePath: join(requestConfig.basePath || '', _requestConfig.basePath || ''),
     })
   }
   return requestConfig
@@ -26,31 +32,34 @@ const enterModule = (way: string[], requestConfig: IRequestConfig): IRequestConf
 const getRequest = (
   name: string,
   requestConfig: IRequestConfig,
-): IRequest => {
+): IRequest | TRequestRunner => {
   return requestConfig.requests[name]
 }
 
 const moduleExplorer = (
   requestInfo: string,
   requestConfig: IRequestConfig,
-): IRequest => {
+): IResolveRequestInfoResult => {
   const [name, module] = requestInfo.split('@')
-  if(!module){
-    return getRequest(name, requestConfig)
+  const getResult = (requestConfig: IRequestConfig) => {
+    return {basePath: requestConfig.basePath, requestInfo: getRequest(name, requestConfig)}
   }
-  const _requestConfig = enterModule(module.split('/'), requestConfig)
-  return getRequest(name, _requestConfig)
+  if(!module){
+    return getResult(requestConfig)
+  }
+  return getResult(enterModule(module.split('/'), requestConfig))
 }
 
 const resolveRequestInfo = (
   requestInfo: string | IRequest,
   requestConfig?: IRequestConfig,
-): IRequest => {
+): IResolveRequestInfoResult => {
   if(typeof requestInfo === 'string'){
     return moduleExplorer(requestInfo, requestConfig)
   }
-  if(typeof requestInfo === 'object'){
-    return requestInfo
+  if(typeof requestInfo === 'object' || typeof requestInfo === 'function'){
+    const {basePath = ''} = requestConfig || {}
+    return {basePath, requestInfo}
   }
 }
 
