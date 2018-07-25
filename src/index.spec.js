@@ -42,6 +42,13 @@ describe('vuex-keg-resolve', () => {
           testModule({request}) {
             return request('test@auth', {item: 'params'}, {item: 'pathParams'}, {item: 'headers'})
           },
+          testObject({request}) {
+            return request({
+              requestInfo: 'test',
+              params: {item: 'params'},
+              headers: {item: 'headers'},
+            })
+          },
         }),
       },
       plugins: [
@@ -134,6 +141,13 @@ describe('vuex-keg-resolve', () => {
       expect(result.params).to.deep.equal({item: 'params'})
       expect(result.headers).to.deep.equal({item: 'headers'})
     })
+    it('should request with an object param', async () => {
+      const result = await store.dispatch('testObject')
+      expect(result.path).to.equal('https://test.com/pathParams')
+      expect(result.method).to.equal('POST')
+      expect(result.params).to.deep.equal({item: 'params'})
+      expect(result.headers).to.deep.equal({item: 'headers'})
+    })
   })
   describe('test stage 2', () => {
     let store
@@ -173,6 +187,107 @@ describe('vuex-keg-resolve', () => {
         item: 'headers',
       })
       window.fetch = originalFetch
+    })
+  })
+  describe('test stage 3', () => {
+    let store
+    let beForeContext
+    let beForeContextSe
+    let beForePayload
+    let beForePayloadSe
+    let afterContext
+    let afterPayload
+    store = new Vuex.Store({
+      state: {
+        test: null,
+      },
+      actions: {
+        ...keg({
+          test({request}) {
+            return request({
+              path: 'pathParams',
+              method: 'POST',
+            }, {item: 'params'}, null, {item: 'headers'})
+          },
+        }),
+      },
+      plugins: [
+        vuexKeg({
+          plugins: {
+            request: vuexRequest({
+              request: (path, {method, headers, params}) => (
+                Promise.resolve({path, method, headers, params})
+              ),
+              beforeHook: [
+                (context, payload) => {
+                  beForeContext = context
+                  beForePayload = payload
+                  return payload
+                },
+                (context, payload) => {
+                  beForeContextSe = context
+                  beForePayloadSe = payload
+                  return payload
+                },
+              ],
+              afterHook: (context, payload) => {
+                afterContext = context
+                afterPayload = payload
+                return payload
+              },
+              requestConfig: {
+                basePath: 'https://test.com',
+              },
+            }),
+          },
+        }),
+      ],
+    })
+    it('should work with hooks', async () => {
+      const result = await store.dispatch('test')
+      expect(result.path).to.equal('https://test.com/pathParams')
+      expect(result.params).to.deep.equal({item: 'params'})
+      expect(result.method).to.equal('POST')
+      expect(result.headers).to.deep.equal({item: 'headers'})
+      expect(beForeContext.rootState).to.be.a('object')
+      expect(beForeContext.state).to.be.a('object')
+      expect(beForeContext.getters).to.be.a('object')
+      expect(beForeContext.commit).to.be.a('function')
+      expect(beForeContext.dispatch).to.be.a('function')
+      expect(beForePayload.path).to.equal('https://test.com/pathParams')
+      expect(beForePayload.params).to.deep.equal({item: 'params'})
+      expect(beForePayload.method).to.equal('POST')
+      expect(beForePayload.headers).to.deep.equal({item: 'headers'})
+      //
+      expect(beForeContextSe.rootState).to.be.a('object')
+      expect(beForeContextSe.state).to.be.a('object')
+      expect(beForeContextSe.getters).to.be.a('object')
+      expect(beForeContextSe.commit).to.be.a('function')
+      expect(beForeContextSe.dispatch).to.be.a('function')
+      expect(beForePayloadSe.path).to.equal('https://test.com/pathParams')
+      expect(beForePayloadSe.params).to.deep.equal({item: 'params'})
+      expect(beForePayloadSe.method).to.equal('POST')
+      expect(beForePayloadSe.headers).to.deep.equal({item: 'headers'})
+      //
+      expect(beForeContextSe.rootState).to.be.a('object')
+      expect(beForeContextSe.state).to.be.a('object')
+      expect(beForeContextSe.getters).to.be.a('object')
+      expect(beForeContextSe.commit).to.be.a('function')
+      expect(beForeContextSe.dispatch).to.be.a('function')
+      expect(beForePayloadSe.path).to.equal('https://test.com/pathParams')
+      expect(beForePayloadSe.params).to.deep.equal({item: 'params'})
+      expect(beForePayloadSe.method).to.equal('POST')
+      expect(beForePayloadSe.headers).to.deep.equal({item: 'headers'})
+      //
+      expect(afterContext.rootState).to.be.a('object')
+      expect(afterContext.state).to.be.a('object')
+      expect(afterContext.getters).to.be.a('object')
+      expect(afterContext.commit).to.be.a('function')
+      expect(afterContext.dispatch).to.be.a('function')
+      expect(afterPayload.path).to.equal('https://test.com/pathParams')
+      expect(afterPayload.params).to.deep.equal({item: 'params'})
+      expect(afterPayload.method).to.equal('POST')
+      expect(afterPayload.headers).to.deep.equal({item: 'headers'})
     })
   })
 })

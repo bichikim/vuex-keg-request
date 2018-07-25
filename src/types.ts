@@ -1,3 +1,4 @@
+import {ActionContext} from 'vuex'
 import {IKegContext} from 'vuex-keg'
 
 export interface IRequestRunnerPayload {
@@ -11,18 +12,34 @@ export interface IResolveRequestInfoResult {
   requestInfo: IRequest | TRequestRunner
 }
 
+export interface IHookPayload extends IRequestRunnerPayload{
+  path: string
+}
+
 export type TRequestRunner = (url: string, payload?: IRequestRunnerPayload) => Promise<any>
+
+export type TFnBeforeHook<S, R> = (
+  context: ActionContext<S, R>,
+  payload: IHookPayload,
+) => Promise<IHookPayload>
+
+export type TFnAfterHook<S, R> = (
+  context: ActionContext<S, R>,
+  payload: any,
+) => Promise<IHookPayload>
 
 export interface IPathParams {[name: string]: string}
 export interface IParams {[name: string]: any}
 export interface IHeaders {[name: string]: any}
 
-export interface IKegRequestOptions {
+export interface IKegRequestOptions<S> {
   requestConfig?: IRequestConfig
   auth?: (context: IKegContext) => {params: IParams, headers: IHeaders}
   def?: {
     method?: string
   },
+  afterHook?: TFnAfterHook<S, any> | Array<TFnAfterHook<S, any>>
+  beforeHook?: TFnBeforeHook<S, any> | Array<TFnBeforeHook<S, any>>
   request?: TRequestRunner
 }
 
