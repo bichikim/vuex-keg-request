@@ -21,12 +21,12 @@ export type TRequestRunner = (url: string, payload?: IRequestRunnerPayload) => P
 export type TFnBeforeHook<S, R> = (
   context: ActionContext<S, R>,
   payload: IHookPayload,
-) => Promise<IHookPayload>
+) => Promise<IHookPayload> | IHookPayload
 
 export type TFnAfterHook<S, R> = (
   context: ActionContext<S, R>,
   payload: any,
-) => Promise<IHookPayload>
+) => Promise<IHookPayload> | IHookPayload
 
 export interface IPathParams {[name: string]: string}
 export interface IParams {[name: string]: any}
