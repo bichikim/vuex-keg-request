@@ -18,6 +18,11 @@ export interface IHookPayload extends IRequestRunnerPayload{
 
 export type TRequestRunner = (url: string, payload: IRequestRunnerPayload) => Promise<any> | any
 
+export type TKegRequestPluginRunner = (
+  firstArgs: IRequestOptions | string | IRequest,
+  ...args: any[]
+) => Promise<any>
+
 export type TFnBeforeHook<S, R> = (
   context: ActionContext<S, R>,
   payload: IHookPayload,

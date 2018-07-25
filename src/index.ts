@@ -8,6 +8,7 @@ import {
   IRequest,
   IRequestOptions, TFnAfterHook,
   TFnBeforeHook,
+  TKegRequestPluginRunner,
 } from './types'
 export * from './types'
 
@@ -41,7 +42,7 @@ function kegRequest<S = any>(options: IKegRequestOptions<S> = {})  {
     request,
   } = options
   return () => {
-    return (context: ActionContext<S, any>) => {
+    return (context: ActionContext<S, any>): TKegRequestPluginRunner => {
       return async (
         firstArgs: IRequestOptions | string | IRequest,
         ...args: any[]
