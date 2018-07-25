@@ -31,7 +31,7 @@ async function pipeRunner<S>(
   return (hookList as any)(context, payload)
 }
 
-function kegRequest<S = any>(options: IKegRequestOptions<S> = {})  {
+function kegRequest<S = any, R = any>(options: IKegRequestOptions<S, R> = {})  {
   const {
     requestConfig = {requests: {}},
     def: {

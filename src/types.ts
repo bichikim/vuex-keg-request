@@ -37,9 +37,9 @@ export interface IPathParams {[name: string]: string}
 export interface IParams {[name: string]: any}
 export interface IHeaders {[name: string]: any}
 
-export interface IKegRequestOptions<S> {
+export interface IKegRequestOptions<S, R> {
   requestConfig?: IRequestConfig
-  auth?: (context: IKegContext) => {params: IParams, headers: IHeaders}
+  auth?: (context: IKegContext<S, R>) => {params: IParams, headers: IHeaders}
   def?: {
     method?: string
   },
