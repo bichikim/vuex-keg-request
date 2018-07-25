@@ -16,7 +16,7 @@ export interface IHookPayload extends IRequestRunnerPayload{
   path: string
 }
 
-export type TRequestRunner = (url: string, payload?: IRequestRunnerPayload) => Promise<any>
+export type TRequestRunner = (url: string, payload?: IRequestRunnerPayload) => Promise<any> | any
 
 export type TFnBeforeHook<S, R> = (
   context: ActionContext<S, R>,
