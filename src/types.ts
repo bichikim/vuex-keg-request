@@ -7,8 +7,8 @@ export interface IRequestRunnerPayload {
   method?: string
 }
 
-export interface IResolveRequestInfoResult {
-  basePath: string
+export interface IResolveRequestInfoResult<S, R> {
+  basePath?: TBasePass<S, R> | Array<TBasePass<S, R>>
   requestInfo: IRequest | TRequestRunner
 }
 
@@ -22,6 +22,8 @@ export type TKegRequestPluginRunner = (
   firstArgs: IRequestOptions | string | IRequest,
   ...args: any[]
 ) => Promise<any>
+
+export type TFnBasePass<S, R> = (context: ActionContext<S, R>) => string
 
 export type TFnBeforeHook<S, R> = (
   context: ActionContext<S, R>,
@@ -38,13 +40,13 @@ export interface IParams {[name: string]: any}
 export interface IHeaders {[name: string]: any}
 
 export interface IKegRequestOptions<S, R> {
-  requestConfig?: IRequestConfig
+  requestConfig?: IRequestConfig<S, R>
   auth?: (context: IKegContext<S, R>) => {params: IParams, headers: IHeaders}
   def?: {
     method?: string
   },
-  afterHook?: TFnAfterHook<S, any> | Array<TFnAfterHook<S, any>>
-  beforeHook?: TFnBeforeHook<S, any> | Array<TFnBeforeHook<S, any>>
+  afterHook?: TFnAfterHook<any, R> | Array<TFnAfterHook<any, R>>
+  beforeHook?: TFnBeforeHook<any, R> | Array<TFnBeforeHook<any, R>>
   request?: TRequestRunner
 }
 
@@ -58,14 +60,16 @@ export interface IRequestOptionNext {
   headers?: IHeaders
 }
 
-export interface IModules {
-  [name: string]: IRequestConfig
+export interface IModules<S, R> {
+  [name: string]: IRequestConfig<S, R>
 }
 
-export interface IRequestConfig {
-  basePath?: string
+export type TBasePass<S, R> = string | TFnBasePass<S, R>
+
+export interface IRequestConfig<S, R> {
+  basePath?: TBasePass<S, R> | Array<TBasePass<S, R>>
   requests: {[name: string]: IRequest | TRequestRunner}
-  modules?: IModules
+  modules?: IModules<S, R>
 }
 
 export type IFcPath = (pathParams: IPathParams) => string

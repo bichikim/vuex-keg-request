@@ -1,5 +1,6 @@
 import join from 'url-join'
 import {ActionContext} from 'vuex'
+import resolveBasePaths from './resolve-base-path'
 import resolveParams from './resolve-params'
 import resolveRequestInfo from './resolve-request-info'
 import {
@@ -7,6 +8,7 @@ import {
   IKegRequestOptions,
   IRequest,
   IRequestOptions, TFnAfterHook,
+  TFnBasePass,
   TFnBeforeHook,
   TKegRequestPluginRunner,
 } from './types'
@@ -42,7 +44,7 @@ function kegRequest<S = any, R = any>(options: IKegRequestOptions<S, R> = {})  {
     request,
   } = options
   return () => {
-    return (context: ActionContext<S, any>): TKegRequestPluginRunner => {
+    return (context: ActionContext<S, R>): TKegRequestPluginRunner => {
       return async (
         firstArgs: IRequestOptions | string | IRequest,
         ...args: any[]
@@ -53,24 +55,26 @@ function kegRequest<S = any, R = any>(options: IKegRequestOptions<S, R> = {})  {
           params,
           pathParams,
         } = resolveParams(firstArgs, ...args)
-        const {basePath, requestInfo} = resolveRequestInfo(_requestInfo, requestConfig)
+        const {basePath, requestInfo} =
+          resolveRequestInfo<S, R>(_requestInfo, context, requestConfig)
+        const url = resolveBasePaths(context, basePath)
         if(typeof requestInfo === 'function'){
-          return requestInfo(basePath, {params, headers})
+          return requestInfo(url, {params, headers})
         }
         const {path = '', method = defaultMethod, request: _request} = requestInfo
-        const url = join(basePath, typeof path === 'function' ? path(pathParams) : path)
+        const urlAndPath = join(url, typeof path === 'function' ? path(pathParams) : path)
         const payload: IHookPayload = await pipeRunner<S>(
           context,
-          {path: url, params, headers, method}, beforeHook
+          {path: urlAndPath, params, headers, method}, beforeHook
         )
-        const {path: _url, ...otherPayload} = payload
+        const {path: _urlAndPath, ...otherPayload} = payload
         let result
         if(_request){
-          result = await _request(_url, otherPayload)
+          result = await _request(_urlAndPath, otherPayload)
         }else if(request){
-          result = await request(url, otherPayload)
+          result = await request(_urlAndPath, otherPayload)
         }else{
-          result = await fetch(url, {
+          result = await fetch(_urlAndPath, {
             body: JSON.stringify(otherPayload.params),
             headers: {
               'Content-Type': 'application/json',

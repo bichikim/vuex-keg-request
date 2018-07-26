@@ -1,4 +1,5 @@
-import join from 'url-join'
+
+import {ActionContext} from 'vuex'
 
 import {
   IRequest,
@@ -7,9 +8,14 @@ import {
   TRequestRunner,
 } from './types'
 
-const enterModule = (way: string[], requestConfig: IRequestConfig): IRequestConfig => {
-  if(way.length > 0){
-    const nextModuleName = way.shift()
+function enterModule<S, R>(
+  way: string[],
+  context: ActionContext<S, R>,
+  requestConfig: IRequestConfig<S, R>,
+): IRequestConfig<S, R> {
+  const cloneWay = [...way]
+  if(cloneWay.length > 0){
+    const nextModuleName = cloneWay.shift()
     if(!requestConfig.modules){
       throw new Error(
         '[vuex-keg-request enterModule] no modules any more a way of module' +
@@ -17,45 +23,60 @@ const enterModule = (way: string[], requestConfig: IRequestConfig): IRequestConf
     }
     const _requestConfig = requestConfig.modules[nextModuleName]
     //
-    return enterModule(way, {
-      ..._requestConfig,
-      basePath: join(requestConfig.basePath || '', _requestConfig.basePath || ''),
-    })
+
+    let basePath = requestConfig.basePath
+    let nextBasePath = _requestConfig.basePath
+    if(!Array.isArray(basePath)){
+      basePath = [basePath]
+    }
+    if(!Array.isArray(nextBasePath)){
+      nextBasePath = [nextBasePath]
+    }
+
+    return enterModule(
+      cloneWay,
+      context,
+      {
+        ..._requestConfig,
+        basePath: (basePath as any[]).concat(nextBasePath),
+      },
+    )
   }
   return requestConfig
 }
 
-const getRequest = (
+function getRequest<S, R>(
   name: string,
-  requestConfig: IRequestConfig,
-): IRequest | TRequestRunner => {
+  requestConfig: IRequestConfig<S, R>,
+): IRequest | TRequestRunner {
   return requestConfig.requests[name]
 }
 
-const moduleExplorer = (
+function moduleExplorer<S, R>(
   requestInfo: string,
-  requestConfig: IRequestConfig,
-): IResolveRequestInfoResult => {
+  context: ActionContext<S, R>,
+  requestConfig: IRequestConfig<S, R>,
+): IResolveRequestInfoResult<S, R> {
   const [name, module] = requestInfo.split('@')
-  const getResult = (requestConfig: IRequestConfig) => {
-    return {basePath: requestConfig.basePath, requestInfo: getRequest(name, requestConfig)}
+  const getResult = (requestConfig: IRequestConfig<S, R>): IResolveRequestInfoResult<S, R> => {
+    return {basePath: requestConfig.basePath, requestInfo: getRequest<S, R>(name, requestConfig)}
   }
   if(!module){
     return getResult(requestConfig)
   }
-  return getResult(enterModule(module.split('/'), requestConfig))
+  return getResult(enterModule(module.split('/'), context, requestConfig))
 }
 
-const resolveRequestInfo = (
+function resolveRequestInfo<S, R>(
   requestInfo: string | IRequest,
-  requestConfig?: IRequestConfig,
-): IResolveRequestInfoResult => {
+  context: ActionContext<S, R>,
+  requestConfig?: IRequestConfig<S, R>,
+): IResolveRequestInfoResult<S, R> {
   if(typeof requestInfo === 'string'){
-    return moduleExplorer(requestInfo, requestConfig)
+    return moduleExplorer(requestInfo, context, requestConfig)
   }
   if(typeof requestInfo === 'object' || typeof requestInfo === 'function'){
-    const {basePath = ''} = requestConfig || {}
-    return {basePath, requestInfo}
+    return {basePath: requestConfig.basePath, requestInfo}
   }
 }
 
