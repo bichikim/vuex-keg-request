@@ -68,7 +68,7 @@ export type TBasePass<S, R> = string | TFnBasePass<S, R>
 
 export interface IRequestConfig<S, R> {
   basePath?: TBasePass<S, R> | Array<TBasePass<S, R>>
-  requests: {[name: string]: IRequest | TRequestRunner}
+  requests?: {[name: string]: IRequest | TRequestRunner}
   modules?: IModules<S, R>
 }
 
