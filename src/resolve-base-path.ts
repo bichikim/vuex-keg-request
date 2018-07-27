@@ -8,7 +8,13 @@ function resolveBasePath<S, R>(
   context: ActionContext<S, R>,
   bassPath: TBasePass<S, R>,
 ): string {
-  return typeof bassPath === 'string' ? bassPath : bassPath(context)
+  if(typeof bassPath === 'string'){
+    return bassPath
+  }
+  if(typeof bassPath === 'function'){
+    return bassPath(context)
+  }
+  return ''
 }
 
 function resolveBasePaths<S, R>(

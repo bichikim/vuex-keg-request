@@ -5,6 +5,9 @@ import {
 
 const resolveParams = (
   firstArgs: IRequestOptions | string | IRequest, ...args: any[]): IRequestOptions => {
+  if(!firstArgs){
+    throw new Error('[vuex-keg-request resolve-params] firstArgs must exist')
+  }
   if(
     typeof firstArgs === 'string'
     || typeof firstArgs === 'function'
@@ -17,11 +20,7 @@ const resolveParams = (
     )
   }
 
-  if(typeof firstArgs === 'object'){
-    return firstArgs as IRequestOptions
-  }
-
-  throw Error(`[vuex-keg-request] unknown firstArgs : ${firstArgs}`)
+  return firstArgs as IRequestOptions
 }
 
 export default resolveParams

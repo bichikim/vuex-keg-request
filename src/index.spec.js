@@ -42,6 +42,9 @@ describe('vuex-keg-resolve', () => {
           testModule({request}) {
             return request('test@auth', {item: 'params'}, {item: 'pathParams'}, {item: 'headers'})
           },
+          testModuleArrayBasePath({request}) {
+            return request('test@docs', {item: 'params'}, {item: 'pathParams'}, {item: 'headers'})
+          },
           testObject({request}) {
             return request({
               requestInfo: 'test',
@@ -62,6 +65,16 @@ describe('vuex-keg-resolve', () => {
                 basePath: 'https://test.com',
                 modules: {
                   auth: {
+                    basePath: 'auth',
+                    requests: {
+                      test: {
+                        path: 'moduleParams',
+                        method: 'POST',
+                      },
+                    },
+                  },
+                  docs: {
+                    basePath: ['docs', 'next'],
                     requests: {
                       test: {
                         path: 'moduleParams',
@@ -136,7 +149,14 @@ describe('vuex-keg-resolve', () => {
     })
     it('should request with name & module', async () => {
       const result = await store.dispatch('testModule')
-      expect(result.path).to.equal('https://test.com/moduleParams')
+      expect(result.path).to.equal('https://test.com/auth/moduleParams')
+      expect(result.method).to.equal('POST')
+      expect(result.params).to.deep.equal({item: 'params'})
+      expect(result.headers).to.deep.equal({item: 'headers'})
+    })
+    it('should request with name & module & array basePath', async () => {
+      const result = await store.dispatch('testModuleArrayBasePath')
+      expect(result.path).to.equal('https://test.com/docs/next/moduleParams')
       expect(result.method).to.equal('POST')
       expect(result.params).to.deep.equal({item: 'params'})
       expect(result.headers).to.deep.equal({item: 'headers'})
@@ -163,6 +183,12 @@ describe('vuex-keg-resolve', () => {
             method: 'POST',
           }, {item: 'params'}, null, {item: 'headers'})
         },
+        testError({request}) {
+          return request(null, {item: 'params'}, null, {item: 'headers'})
+        },
+        testNoneModule({request}) {
+          return request('test@module', {item: 'params'}, null, {item: 'headers'})
+        },
       }),
       },
       plugins: [
@@ -188,6 +214,26 @@ describe('vuex-keg-resolve', () => {
       })
       window.fetch = originalFetch
     })
+    it('should not work with no pathInfo', async () => {
+      let _error
+      try{
+        await store.dispatch('testError')
+      }catch(error){
+        _error = error
+      }
+      expect(_error).to.be.an('Error')
+      expect(_error.message).to.include('firstArgs must exist')
+    })
+    it('should not work with no request config', async () => {
+      let _error
+      try{
+        await store.dispatch('testNoneModule')
+      }catch(error){
+        _error = error
+      }
+      expect(_error).to.be.an('Error')
+      expect(_error.message).to.include('there is no modules any moreis module')
+    })
   })
   describe('test stage 3', () => {
     let store
@@ -200,6 +246,7 @@ describe('vuex-keg-resolve', () => {
     store = new Vuex.Store({
       state: {
         test: null,
+        url: 'https://test.com',
       },
       actions: {
         ...keg({
@@ -208,6 +255,9 @@ describe('vuex-keg-resolve', () => {
               path: 'pathParams',
               method: 'POST',
             }, {item: 'params'}, null, {item: 'headers'})
+          },
+          testArrayRootBasePath({request}) {
+            return request('test@auth', {item: 'params'}, null, {item: 'headers'})
           },
         }),
       },
@@ -236,7 +286,18 @@ describe('vuex-keg-resolve', () => {
                 return payload
               },
               requestConfig: {
-                basePath: 'https://test.com',
+                basePath: [({state}) => (state.url), 'next'],
+                modules: {
+                  auth: {
+                    basePath: 'auth',
+                    requests:{
+                      test: {
+                        path: 'moduleParams',
+                        method: 'POST',
+                      },
+                    },
+                  },
+                },
               },
             }),
           },
@@ -245,7 +306,7 @@ describe('vuex-keg-resolve', () => {
     })
     it('should work with hooks', async () => {
       const result = await store.dispatch('test')
-      expect(result.path).to.equal('https://test.com/pathParams')
+      expect(result.path).to.equal('https://test.com/next/pathParams')
       expect(result.params).to.deep.equal({item: 'params'})
       expect(result.method).to.equal('POST')
       expect(result.headers).to.deep.equal({item: 'headers'})
@@ -254,7 +315,7 @@ describe('vuex-keg-resolve', () => {
       expect(beForeContext.getters).to.be.a('object')
       expect(beForeContext.commit).to.be.a('function')
       expect(beForeContext.dispatch).to.be.a('function')
-      expect(beForePayload.path).to.equal('https://test.com/pathParams')
+      expect(beForePayload.path).to.equal('https://test.com/next/pathParams')
       expect(beForePayload.params).to.deep.equal({item: 'params'})
       expect(beForePayload.method).to.equal('POST')
       expect(beForePayload.headers).to.deep.equal({item: 'headers'})
@@ -264,7 +325,7 @@ describe('vuex-keg-resolve', () => {
       expect(beForeContextSe.getters).to.be.a('object')
       expect(beForeContextSe.commit).to.be.a('function')
       expect(beForeContextSe.dispatch).to.be.a('function')
-      expect(beForePayloadSe.path).to.equal('https://test.com/pathParams')
+      expect(beForePayloadSe.path).to.equal('https://test.com/next/pathParams')
       expect(beForePayloadSe.params).to.deep.equal({item: 'params'})
       expect(beForePayloadSe.method).to.equal('POST')
       expect(beForePayloadSe.headers).to.deep.equal({item: 'headers'})
@@ -274,7 +335,7 @@ describe('vuex-keg-resolve', () => {
       expect(beForeContextSe.getters).to.be.a('object')
       expect(beForeContextSe.commit).to.be.a('function')
       expect(beForeContextSe.dispatch).to.be.a('function')
-      expect(beForePayloadSe.path).to.equal('https://test.com/pathParams')
+      expect(beForePayloadSe.path).to.equal('https://test.com/next/pathParams')
       expect(beForePayloadSe.params).to.deep.equal({item: 'params'})
       expect(beForePayloadSe.method).to.equal('POST')
       expect(beForePayloadSe.headers).to.deep.equal({item: 'headers'})
@@ -284,10 +345,17 @@ describe('vuex-keg-resolve', () => {
       expect(afterContext.getters).to.be.a('object')
       expect(afterContext.commit).to.be.a('function')
       expect(afterContext.dispatch).to.be.a('function')
-      expect(afterPayload.path).to.equal('https://test.com/pathParams')
+      expect(afterPayload.path).to.equal('https://test.com/next/pathParams')
       expect(afterPayload.params).to.deep.equal({item: 'params'})
       expect(afterPayload.method).to.equal('POST')
       expect(afterPayload.headers).to.deep.equal({item: 'headers'})
+    })
+    it('should work test Array basePath at root', async () => {
+      const result = await store.dispatch('testArrayRootBasePath')
+      expect(result.path).to.equal('https://test.com/next/auth/moduleParams')
+      expect(result.params).to.deep.equal({item: 'params'})
+      expect(result.method).to.equal('POST')
+      expect(result.headers).to.deep.equal({item: 'headers'})
     })
   })
 })

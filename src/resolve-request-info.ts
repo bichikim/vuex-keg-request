@@ -18,7 +18,7 @@ function enterModule<S, R>(
     const nextModuleName = cloneWay.shift()
     if(!requestConfig.modules){
       throw new Error(
-        '[vuex-keg-request enterModule] no modules any more a way of module' +
+        '[vuex-keg-request enterModule] there is no modules any more' +
         `is ${way.join('/')}`)
     }
     const _requestConfig = requestConfig.modules[nextModuleName]
