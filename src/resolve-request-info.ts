@@ -75,9 +75,15 @@ function resolveRequestInfo<S, R>(
   if(typeof requestInfo === 'string'){
     return moduleExplorer(requestInfo, context, requestConfig)
   }
+
+  /* istanbul ignore else */
   if(typeof requestInfo === 'object' || typeof requestInfo === 'function'){
     return {basePath: requestConfig.basePath, requestInfo}
   }
+  /* istanbul ignore next */
+  throw new Error(
+    '[vuex-keg-request resolveRequestInfo]' +
+    ' requestInfo should be a function, a object or a string')
 }
 
 export default resolveRequestInfo

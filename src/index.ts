@@ -59,7 +59,7 @@ function kegRequest<S = any, R = any>(options: IKegRequestOptions<S, R> = {})  {
           resolveRequestInfo<S, R>(_requestInfo, context, requestConfig)
         const url = resolveBasePaths(context, basePath)
         if(typeof requestInfo === 'function'){
-          return requestInfo(url, {params, headers})
+          return requestInfo(url, {params, headers, method: defaultMethod})
         }
         const {path = '', method = defaultMethod, request: _request} = requestInfo
         const urlAndPath = join(url, typeof path === 'function' ? path(pathParams) : path)
