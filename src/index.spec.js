@@ -377,4 +377,37 @@ describe('vuex-keg-resolve', () => {
       expect(result.headers).to.deep.equal({item: 'headers'})
     })
   })
+  // describe('test stage 4 query support', () => {
+  //   const mockQueries = {
+  //     auth: `
+  //       sign-in(email: "$email", password: "$password"){
+  //         accessToken,
+  //         refreshAccessToken,
+  //         email,
+  //       }
+  //     `,
+  //   }
+  //   const store = new Vuex.Store({
+  //     state: {
+  //       test: null,
+  //       url: 'https://test.com',
+  //     },
+  //     actions: {
+  //       ...keg({}),
+  //     },
+  //     plugins: [
+  //       vuexKeg({
+  //         plugins: {
+  //           request: vuexKeg({
+  //             queryConfig: {
+  //               basePath: ({state}) => (state.url),
+  //               queries: mockQueries,
+  //             },
+  //           }),
+  //         },
+  //       }),
+  //     ],
+  //   })
+  //   it('should work with query')
+  // })
 })
