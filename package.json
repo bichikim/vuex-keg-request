@@ -1,6 +1,6 @@
 {
   "name": "vuex-keg-request",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "a request plugin for vuex-keg",
   "author": "bichi",
   "main": "dist/app.js",
