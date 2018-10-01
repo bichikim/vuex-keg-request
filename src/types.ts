@@ -72,7 +72,7 @@ export interface IRequestConfig<S, R> {
   modules?: IModules<S, R>
 }
 
-export type IFcPath = (pathParams: IPathParams) => string
+export type IFcPath = (pathParams?: IPathParams) => string
 
 export interface IRequest {
   path: string | IFcPath

@@ -6,7 +6,7 @@ import {
 
 function resolveBasePath<S, R>(
   context: ActionContext<S, R>,
-  bassPath: TBasePass<S, R>,
+  bassPath?: TBasePass<S, R>,
 ): string {
   if(typeof bassPath === 'string'){
     return bassPath
@@ -19,7 +19,7 @@ function resolveBasePath<S, R>(
 
 function resolveBasePaths<S, R>(
   context: ActionContext<S, R>,
-  bassPath: TBasePass<S, R> | Array<TBasePass<S, R>>,
+  bassPath?: TBasePass<S, R> | Array<TBasePass<S, R>>,
 ): string {
   if(Array.isArray(bassPath)){
     let myBasePath: string = ''

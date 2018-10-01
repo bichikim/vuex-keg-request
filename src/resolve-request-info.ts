@@ -11,12 +11,12 @@ import {
 function enterModule<S, R>(
   way: string[],
   context: ActionContext<S, R>,
-  requestConfig: IRequestConfig<S, R>,
-): IRequestConfig<S, R> {
+  requestConfig?: IRequestConfig<S, R>,
+): IRequestConfig<S, R> | undefined {
   const cloneWay = [...way]
   if(cloneWay.length > 0){
-    const nextModuleName = cloneWay.shift()
-    if(!requestConfig.modules){
+    const nextModuleName: any = cloneWay.shift()
+    if(!requestConfig || !requestConfig.modules){
       throw new Error(
         '[vuex-keg-request enterModule] there is no modules any more' +
         `is ${way.join('/')}`)
@@ -24,8 +24,8 @@ function enterModule<S, R>(
     const _requestConfig = requestConfig.modules[nextModuleName]
     //
 
-    let basePath = requestConfig.basePath
-    let nextBasePath = _requestConfig.basePath
+    let basePath: any = requestConfig.basePath
+    let nextBasePath: any = _requestConfig.basePath
     if(!Array.isArray(basePath)){
       basePath = [basePath]
     }
@@ -47,19 +47,25 @@ function enterModule<S, R>(
 
 function getRequest<S, R>(
   name: string,
-  requestConfig: IRequestConfig<S, R>,
+  requestConfig?: IRequestConfig<S, R>,
 ): IRequest | TRequestRunner {
+  if(!requestConfig || !requestConfig.requests){
+    throw new Error('no requests')
+  }
   return requestConfig.requests[name]
 }
 
 function moduleExplorer<S, R>(
   requestInfo: string,
   context: ActionContext<S, R>,
-  requestConfig: IRequestConfig<S, R>,
+  requestConfig?: IRequestConfig<S, R>,
 ): IResolveRequestInfoResult<S, R> {
   const [name, module] = requestInfo.split('@')
-  const getResult = (requestConfig: IRequestConfig<S, R>): IResolveRequestInfoResult<S, R> => {
-    return {basePath: requestConfig.basePath, requestInfo: getRequest<S, R>(name, requestConfig)}
+  const getResult = (requestConfig?: IRequestConfig<S, R>): IResolveRequestInfoResult<S, R> => {
+    return {
+      basePath: requestConfig && requestConfig.basePath,
+      requestInfo: getRequest<S, R>(name, requestConfig),
+    }
   }
   if(!module){
     return getResult(requestConfig)
@@ -78,7 +84,10 @@ function resolveRequestInfo<S, R>(
 
   /* istanbul ignore else */
   if(typeof requestInfo === 'object' || typeof requestInfo === 'function'){
-    return {basePath: requestConfig.basePath, requestInfo}
+    return {
+      basePath: requestConfig && requestConfig.basePath,
+      requestInfo,
+    }
   }
   /* istanbul ignore next */
   throw new Error(

@@ -8,7 +8,6 @@ import {
   IKegRequestOptions,
   IRequest,
   IRequestOptions, TFnAfterHook,
-  TFnBasePass,
   TFnBeforeHook,
   TKegRequestPluginRunner,
 } from './types'
